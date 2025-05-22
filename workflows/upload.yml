@@ -1,0 +1,55 @@
+name: Upload to AWS S3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Build Lambda zip with date
+        run: |
+          make clean
+          make package
+          echo "BUILD_DIR=build" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(basename -s .zip $(ls build/*.zip))" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: github-actions
+          aws-region: eu-north-1
+
+      - name: Upload Lambda zip to S3
+        run: |
+          aws s3 cp ${{ env.BUILD_DIR }}/${{ env.RELEASE_NAME }}.zip s3://$BUILD_BUCKET_NAME/developer_hub_edge_lambda_request/dev/${{ env.RELEASE_NAME }}.zip
+        env:
+          BUILD_BUCKET_NAME: ${{ secrets.BUILD_BUCKET_NAME }}
+          AWS_REGION: eu-north-1
+
+      - uses: ncipollo/release-action@v1
+        with:
+          commit: ${{ github.sha }}
+          tag: ${{ env.RELEASE_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+
+      
