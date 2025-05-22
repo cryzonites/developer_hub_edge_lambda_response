@@ -42,8 +42,8 @@ jobs:
         run: |
           aws s3 cp ${{ env.BUILD_DIR }}/${{ env.RELEASE_NAME }}.zip s3://$BUILD_BUCKET_NAME/developer_hub_edge_lambda_response/dev/${{ env.RELEASE_NAME }}.zip
         env:
-          BUILD_BUCKET_NAME: ${{ secrets.BUILD_BUCKET_NAME }}
-          AWS_REGION: eu-north-1
+          BUILD_BUCKET_NAME: ${{ secrets.LAMBDA_EDGE_BUCKET }}
+          AWS_REGION: us-east-1
 
       - uses: ncipollo/release-action@v1
         with:
