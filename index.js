@@ -52,7 +52,7 @@ function rewriteCookie(request, token) {
 }
 
 function redirectToCognitoLogin() {
-    const cognitoLoginUrl = 'https://auth.developer-hub.cryzon.com/login?client_id=ier4f9o180rrcujdu110ui9k3&response_type=token&redirect_uri=https://developer-hub.cryzon.com';
+    const cognitoLoginUrl = 'https://auth.developer-hub.cryzon.com/login?client_id=ier4f9o180rrcujdu110ui9k3&response_type=code&scope=email+openid+profile&&redirect_uri=https://developer-hub.cryzon.com';
     return {
         status: '302',
         statusDescription: 'Found',
